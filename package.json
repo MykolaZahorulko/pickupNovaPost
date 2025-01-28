@@ -1,0 +1,30 @@
+{
+  "name": "pickup-nova-post",
+  "version": "1.0.0",
+  "description": "The code will bring nova post pickup sites and add them to idosell system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://mykolazahorulko@bitbucket.org/brandsmanago/pickup-novapost.git"
+  },
+  "keywords": [
+    "nova",
+    "post",
+    "pickup"
+  ],
+  "author": "Mykola Zahorulko <mykola.zahorulko@brandsmanago.pl>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://bitbucket.org/brandsmanago/pickup-novapost/issues"
+  },
+  "homepage": "https://bitbucket.org/brandsmanago/pickup-novapost#readme",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "prettier": "^3.4.2"
+  }
+}
