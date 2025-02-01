@@ -1,17 +1,18 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { getFromIdosell } from './get-pickup-points.mjs';
+import { logError, logInfo } from '../../utils/logger.mjs';
 
-dotenv.config(); // Importing all variables from env file
+dotenv.config();
 
-// The function deletes pickup points from idosell, that are provided as an argument
 const deleteFromIdosell = async (pickupPointsToDelete) => {
   try {
     let requestBody = {
       params: {
-        pickupPointDeleteRequests: pickupPointsToDelete.map((pickupPointId) => ({
-          pickupPointExternalId: pickupPointId,
-        })),
+        pickupPointDeleteRequests: pickupPointsToDelete.map(
+          (idPointToDelete) => ({
+            pickupPointExternalId: idPointToDelete,
+          })
+        ),
       },
     };
 
@@ -27,21 +28,11 @@ const deleteFromIdosell = async (pickupPointsToDelete) => {
       }
     );
 
-    if (response.status === 200) {
-      console.log('Successfully deleted pickup points');
-    } else {
-      console.error('Error while deleting pickup points from IdoSell');
-    }
-  } catch (error) {
-    console.error(
-      `Error while deleting pickup points from IdoSell: ${error.message}`
+    logInfo(
+      `Successfully deleted pickup points, status code: ${response.status}`
     );
-    if (error.response) {
-      console.error(
-        `Response data: ${JSON.stringify(error.response.data, null, 2)}`
-      );
-      console.error(`Response status: ${error.response.status}`);
-    }
+  } catch (error) {
+    logError(`Error deleting pickup points: ${error.message}`);
   }
 };
 

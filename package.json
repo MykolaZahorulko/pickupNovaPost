@@ -24,6 +24,7 @@
   "homepage": "https://bitbucket.org/brandsmanago/pickup-novapost#readme",
   "dependencies": {
     "axios": "^1.7.9",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "prettier": "^3.4.2"
   }

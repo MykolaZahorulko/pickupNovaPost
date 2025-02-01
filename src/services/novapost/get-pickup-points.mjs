@@ -1,7 +1,8 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
+import { logError } from '../../utils/logger.mjs';
 
-dotenv.config(); // Importing all variables from env file
+dotenv.config();
 
 const getFromNovaPost = async (limit, page) => {
   try {
@@ -10,17 +11,23 @@ const getFromNovaPost = async (limit, page) => {
       modelName: 'AddressGeneral',
       calledMethod: 'getWarehouses',
       // Add methodProperties only if limit or page is provided
-      ...(limit || page ? { methodProperties: { ...(limit && { Limit: limit }), ...(page && { Page: page }) } } : {}),
+      ...(limit || page
+        ? {
+            methodProperties: {
+              ...(limit && { Limit: limit }),
+              ...(page && { Page: page }),
+            },
+          }
+        : {}),
     });
 
     if (response.data.success) {
-      return response.data; // Returning array of pickup points
+      return response.data;
     } else {
-      throw new Error(`API Error: ${response.data.errors.join(', ')}`);
+      logError(`Error getting pickup points from NovaPost: ${response.data}`);
     }
   } catch (error) {
-    console.error('Error fetching pickup points', error.message);
-    throw error;
+    logError(`Error getting pickup points from NovaPost: ${error.message}`);
   }
 };
 

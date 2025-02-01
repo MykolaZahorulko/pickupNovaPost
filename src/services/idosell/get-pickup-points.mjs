@@ -1,7 +1,8 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
+import { logError } from '../../utils/logger.mjs';
 
-dotenv.config(); // Importing all variables from env file
+dotenv.config();
 
 /**
  * Get pickup points from IdoSell.
@@ -19,7 +20,6 @@ const getFromIdosell = async (
   pickupPointId
 ) => {
   try {
-    // Ensure resultsLimit is within valid range
     if (resultsLimit < 1 || resultsLimit > 100) {
       throw new Error('resultsLimit must be between 1 and 100.');
     }
@@ -41,19 +41,17 @@ const getFromIdosell = async (
 
         const { result, resultsNumberAll } = response.data;
 
-        // Add current results to the array
         allPickupPoints.push(...result);
 
         // Break the loop if we received fewer results than the limit
         if (allPickupPoints.length >= resultsNumberAll) break;
 
-        page++; // Increment page for the next iteration
+        page++;
       }
 
       return allPickupPoints;
     } else {
       const response = await axios.get(
-        // The request link is processed by the arguments and data in the .env file
         `${process.env.IDOSELL_SHOP_API_URL}?courierId=${process.env.IDOSELL_SHOP_CURIER_ID}&pickupPointId=${pickupPointId ? pickupPointId : ''}&resultsPage=${resultsPage}&resultsLimit=${resultsLimit}`,
         {
           headers: {
@@ -66,15 +64,9 @@ const getFromIdosell = async (
       return response.data;
     }
   } catch (error) {
-    console.error(
+    logError(
       `Error while getting pickup points from IdoSell: ${error.message}`
     );
-    if (error.response) {
-      console.error(
-        `Response data: ${JSON.stringify(error.response.data, null, 2)}`
-      );
-      console.error(`Response status: ${error.response.status}`);
-    }
   }
 };
 
