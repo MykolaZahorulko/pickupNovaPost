@@ -1,6 +1,9 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
+import pLimit from 'p-limit';
 import { logError } from '../../utils/logger.mjs';
+
+const limit = pLimit(100); // max 100 requests at once, when we get all points
 
 dotenv.config();
 
@@ -20,36 +23,40 @@ const getFromIdosell = async (
   pickupPointId
 ) => {
   try {
-    if (resultsLimit < 1 || resultsLimit > 100) {
-      throw new Error('resultsLimit must be between 1 and 100.');
-    }
-
     if (ifGetAll) {
-      let allPickupPoints = [];
-      let page = 0;
+      const firstResponse = await axios.get(
+        `${process.env.IDOSELL_SHOP_API_URL}?courierId=${process.env.IDOSELL_SHOP_CURIER_ID}&resultsLimit=${resultsLimit}&resultsPage=0`,
+        {
+          headers: {
+            accept: 'application/json',
+            'X-API-KEY': process.env.IDOSELL_SHOP_API_KEY,
+          },
+        }
+      );
 
-      while (true) {
-        const response = await axios.get(
-          `${process.env.IDOSELL_SHOP_API_URL}?courierId=${process.env.IDOSELL_SHOP_CURIER_ID}&resultsLimit=${resultsLimit}&resultsPage=${page}`,
-          {
-            headers: {
-              accept: 'application/json',
-              'X-API-KEY': process.env.IDOSELL_SHOP_API_KEY,
-            },
-          }
+      const { resultsNumberAll, result } = firstResponse.data;
+      const totalPages = Math.ceil(resultsNumberAll / resultsLimit);
+
+      const requests = [];
+      for (let page = 1; page < totalPages; page++) {
+        requests.push(
+          limit(() =>
+            axios.get(
+              `${process.env.IDOSELL_SHOP_API_URL}?courierId=${process.env.IDOSELL_SHOP_CURIER_ID}&resultsLimit=${resultsLimit}&resultsPage=${page}`,
+              {
+                headers: {
+                  accept: 'application/json',
+                  'X-API-KEY': process.env.IDOSELL_SHOP_API_KEY,
+                },
+              }
+            )
+          )
         );
-
-        const { result, resultsNumberAll } = response.data;
-
-        allPickupPoints.push(...result);
-
-        // Break the loop if we received fewer results than the limit
-        if (allPickupPoints.length >= resultsNumberAll) break;
-
-        page++;
       }
 
-      return allPickupPoints;
+      const responses = await Promise.all(requests);
+      const allResults = responses.flatMap((res) => res.data.result);
+      return [...result, ...allResults];
     } else {
       const response = await axios.get(
         `${process.env.IDOSELL_SHOP_API_URL}?courierId=${process.env.IDOSELL_SHOP_CURIER_ID}&pickupPointId=${pickupPointId ? pickupPointId : ''}&resultsPage=${resultsPage}&resultsLimit=${resultsLimit}`,

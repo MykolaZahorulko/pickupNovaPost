@@ -1,6 +1,6 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { logError, logInfo } from '../../utils/logger.mjs';
+import { logError, logInfo, logWarning } from '../../utils/logger.mjs';
 
 dotenv.config();
 
@@ -28,9 +28,17 @@ const deleteFromIdosell = async (pickupPointsToDelete) => {
       }
     );
 
-    logInfo(
-      `Successfully deleted pickup points, status code: ${response.status}`
-    );
+    if (response.status === 200) {
+      logInfo(
+        `Successfully deleted pickup points, status code: ${response.status}`
+      );
+    } else {
+      logWarning(
+        `Something went wrong while deleting pickup points from IdoSell: ${response.status}
+         Reason: ${JSON.stringify(response.data)}
+        `
+      );
+    }
   } catch (error) {
     logError(`Error deleting pickup points: ${error.message}`);
   }

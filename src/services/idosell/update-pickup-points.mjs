@@ -31,7 +31,7 @@ const updateOnIdosell = async (pickupPointsToUpdate) => {
         `Successfully updated pickup points, status code: ${response.status}`
       );
     }
-  } catch (error) { 
+  } catch (error) {
     logError(`Error updating pickup points: ${error.message}`);
   }
 };

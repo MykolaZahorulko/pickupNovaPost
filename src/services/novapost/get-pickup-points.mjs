@@ -22,7 +22,7 @@ const getFromNovaPost = async (limit, page) => {
     });
 
     if (response.data.success) {
-      return response.data;
+      return response.data.data;
     } else {
       logError(`Error getting pickup points from NovaPost: ${response.data}`);
     }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { logError, logInfo } from '../../utils/logger.mjs';
+import { logError, logInfo, logWarning } from '../../utils/logger.mjs';
 import { processPickupPoint } from '../../utils/process-pickup-point.mjs';
 dotenv.config();
 
@@ -27,9 +27,15 @@ const addToIdosell = async (pickupPointsToAdd) => {
         }
       );
 
-      logInfo(
-        `Successfully added pickup points, status code: ${response.status}`
-      );
+      if (response.status === 200) {
+        logInfo(
+          `Successfully added pickup points, status code: ${response.status}`
+        );
+      } else {
+        logWarning(
+          `The pickup points are already added, status code: ${response.status}`
+        );
+      }
     }
   } catch (error) {
     logError(`Error adding pickup points: ${error.message}`);

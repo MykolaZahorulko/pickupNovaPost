@@ -1,4 +1,4 @@
-import { logDebug } from './logger.mjs'
+import { logDebug } from './logger.mjs';
 import { processSchedule } from './process-schedule.mjs';
 import dotenv from 'dotenv';
 
@@ -10,9 +10,7 @@ const processPickupPoint = (pickupPoint) => {
     pickupPoint.CategoryOfWarehouse === 'DropOff' ||
     !pickupPoint.PostalCodeUA
   ) {
-    logDebug(
-      `Skipping point ${pickupPoint.Number}: not eligible for pickup.`
-    );
+    logDebug(`Skipping point ${pickupPoint.Number}: not eligible for pickup.`);
     return;
   }
   return {

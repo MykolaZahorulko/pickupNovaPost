@@ -32,10 +32,10 @@ This module requires the following modules:
    cd pickupPointsNovaPost
    ```
 2. Install preferences:
-  ```bash
+   ```bash
    npm install
    ```
 3. Start the application:
-  ```bash
+   ```bash
    npm start
    ```
