@@ -27,7 +27,7 @@ const compareAndSyncPickupPoints = async (newPickupPoints, allNovaPosts) => {
         : Promise.resolve(),
     ]);
   } catch (error) {
-    logError(`Error in syncing pickup points: ${error.message}`);
+    logError(`Error in comparing and syncing pickup points: ${error.message}`);
   }
 };
 

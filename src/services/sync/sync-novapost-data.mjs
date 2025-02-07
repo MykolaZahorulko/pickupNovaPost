@@ -11,15 +11,16 @@ const syncNovapostData = async () => {
   try {
     logInfo('Cron for NovaPost syncing started\n');
 
-    await retry(updateIdosellCache);
-    await retry(updateNovaPostCache);
+    await Promise.all([retry(updateIdosellCache), retry(updateNovaPostCache)]);
 
     const allNovaPosts = await getAllNovaPostPickupPoints();
 
     await pickupPointBatchSync(allNovaPosts, 100); // Main function
 
     logInfo('Cron for NovaPost syncing completed\n');
-  } catch {}
+  } catch (error) {
+    logInfo(`Error during NovaPost sync: ${error.message}`);
+  }
 };
 
 export { syncNovapostData };
